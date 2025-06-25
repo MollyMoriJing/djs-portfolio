@@ -2,14 +2,15 @@ const Contact = () => {
   
   const contactInfo = [
     {
-      icon: "📧",
+      icon: (
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M1.5 8.67v8.58a3 3 0 003 3h15a3 3 0 003-3V8.67l-8.928 5.493a3 3 0 01-3.144 0L1.5 8.67z"/>
+          <path d="M22.5 6.908V6.75a3 3 0 00-3-3h-15a3 3 0 00-3 3v.158l9.714 5.978a1.5 1.5 0 001.572 0L22.5 6.908z"/>
+        </svg>
+      ),
+      value: "du.jing2@northeastern.edu",
       label: "jingdu.wrk@gmail.com",
       href: "mailto:jingdu.wrk@gmail.com",
-    },
-     {
-      icon: "🏫",
-      label: "du.jing2@northeastern.edu",
-      href: "mailto:du.jing2@northeastern.edu",
     },
     {
       iconType: "svg",
@@ -30,16 +31,6 @@ const Contact = () => {
       ),
       label: "GitHub",
       href: "https://github.com/MollyMoriJing" 
-    },
-    {
-      icon: "📞",
-      label: "(206) 681-3910",
-      href: "tel:+1-206-681-3910"
-    },
-    {
-      icon: "📍",
-      label: "Seattle, WA",
-      href: null
     }
   ];
 

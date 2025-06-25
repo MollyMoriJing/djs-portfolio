@@ -115,7 +115,7 @@ const Hero = () => {
           </div>
         </div>
         <a href="#contact" className="cta-button fade-in-up">
-            Contact Me
+          Get in Touch
         </a>
         <a href="/DJs_resume.pdf" className="cta-button fade-in-up" download>
           Download Resume
@@ -123,6 +123,13 @@ const Hero = () => {
       </div>
 
       <style jsx>{`
+        .hero {
+          min-height: auto;
+          padding-top: 200px;
+          padding-bottom: 150px;
+          height: auto;
+        }
+
         .profile-section {
           display: flex;
           align-items: center;
@@ -230,10 +237,19 @@ const Hero = () => {
         }
 
         @media (max-width: 768px) {
+          .hero {
+            min-height: auto;
+            height: auto;
+            padding-top: 150px;
+            padding-bottom: 100px;
+          }
+
           .profile-section {
             flex-direction: column;
             text-align: center;
             gap: 2rem;
+            margin-right: 2rem;
+            margin-left: 2rem;
           }
 
           .hero-text {
@@ -261,9 +277,33 @@ const Hero = () => {
             width: 150px;
             height: 150px;
           }
+
+          .cta-desktop {
+            display: none;
+          }
+
+          .cta-mobile {
+            display: inline;
+          }
+
+          .resume-button {
+            margin-left: 0;
+            margin-top: 1rem;
+            width: 100%;
+            text-align: center;
+          }
         }
 
         @media (max-width: 480px) {
+          .hero {
+            padding-top: 100px;
+          }
+
+          .profile-section {
+            margin-right: 1rem;
+            margin-left: 1rem;
+          }
+
           .profile-image-container {
             width: 120px;
             height: 120px;
@@ -272,7 +312,7 @@ const Hero = () => {
           .hero-text h1 {
             font-size: 2rem;
           }
-        }
+      }
       `}</style>
     </section>
   );

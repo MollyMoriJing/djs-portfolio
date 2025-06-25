@@ -114,7 +114,7 @@ const Certifications = () => {
                   <p>View my published research papers and academic contributions in materials science and engineering</p>
                   <button 
                     className="external-btn"
-                    onClick={() => handleExternalLink('https://scholar.google.com/citations?user=YOUR_USER_ID')}
+                    onClick={() => handleExternalLink('https://scholar.google.com/citations?user=zVL41nEAAAAJ&hl=en')}
                   >
                     View on Google Scholar
                   </button>
@@ -132,7 +132,7 @@ const Certifications = () => {
                 <p>Explore my patent applications and granted inventions</p>
                 <button 
                   className="external-btn"
-                  onClick={() => handleExternalLink('https://patents.google.com/?inventor=Jing+Du')}
+                  onClick={() => handleExternalLink('https://patents.google.com/?inventor=%E6%9D%9C%E5%A9%A7,Jing&assignee=%E5%8C%97%E4%BA%AC%E5%9B%BD%E7%94%B5%E5%AF%8C%E9%80%9A%E7%A7%91%E6%8A%80%E5%8F%91%E5%B1%95%E6%9C%89%E9%99%90%E8%B4%A3%E4%BB%BB%E5%85%AC%E5%8F%B8')}
                 >
                   View on Google Patents
                 </button>
@@ -338,7 +338,7 @@ const Certifications = () => {
           border: 1px solid rgba(147, 51, 234, 0.2);
           border-radius: 15px;
           overflow: hidden;
-          aspect-ratio: x/3;
+          aspect-ratio: x/4;
           transition: all 0.3s ease;
         }
 
@@ -351,7 +351,8 @@ const Certifications = () => {
         .publications-image img {
           width: 100%;
           height: 100%;
-          object-fit: cover;
+          object-position: center top;
+          object-fit: fill;
         }
 
         .external-link-container {
@@ -491,17 +492,6 @@ const Certifications = () => {
 
           .certification-card {
             aspect-ratio: 3/2;
-          }
-
-          .publications-content {
-            grid-template-columns: 1fr;
-            gap: 1rem;
-            max-height: none;
-          }
-
-          .publications-image {
-            aspect-ratio: 16/9;
-            max-height: 150px;
           }
 
           .link-card {
