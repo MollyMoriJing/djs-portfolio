@@ -2,15 +2,18 @@ import { useEffect } from 'react';
 
 const Hero = () => {
   useEffect(() => {
-    // Create floating particles
+    if (typeof window === 'undefined') return;
+
     const createParticles = () => {
       const hero = document.querySelector('.hero');
       if (!hero) return;
       
-      for (let i = 0; i < 30; i++) {
+      const particleCount = window.innerWidth < 768 ? 20 : 30;
+      
+      for (let i = 0; i < particleCount; i++) {
         const particle = document.createElement('div');
-        const size = Math.random() * 4 + 2; // 2-6px
-        const opacity = Math.random() * 0.6 + 0.4; // 0.4-1.0
+        const size = Math.random() * 4 + 2;
+        const opacity = Math.random() * 0.6 + 0.4;
         const colors = [
           'rgba(147, 51, 234, 0.8)',
           'rgba(156, 132, 252, 0.7)',
@@ -31,12 +34,27 @@ const Hero = () => {
           animation-delay: ${Math.random() * 3}s;
           z-index: 1;
           box-shadow: 0 0 ${size * 2}px ${color};
+          will-change: transform, opacity;
         `;
         hero.appendChild(particle);
       }
     };
 
-    // Add floating animation styles
+    const animateTitle = () => {
+      const titleElement = document.querySelector('.hero-text h1');
+      const subtitleElement = document.querySelector('.hero-subtitle');
+      
+      if (titleElement) {
+        titleElement.classList.add('title-animate');
+      }
+      
+      if (subtitleElement) {
+        setTimeout(() => {
+          subtitleElement.classList.add('subtitle-animate');
+        }, 1000);
+      }
+    };
+
     const style = document.createElement('style');
     style.textContent = `
       @keyframes float {
@@ -57,31 +75,105 @@ const Hero = () => {
           opacity: 0.8; 
         }
       }
+
+      @keyframes titleSlideIn {
+        0% {
+          transform: translateY(-50px) scale(0.8);
+          opacity: 0;
+        }
+        100% {
+          transform: translateY(0) scale(1);
+          opacity: 1;
+        }
+      }
+
+      @keyframes titleGlow {
+        0%, 100% {
+          text-shadow: 0 0 20px rgba(147, 51, 234, 0.5);
+        }
+        50% {
+          text-shadow: 0 0 30px rgba(147, 51, 234, 0.8), 0 0 40px rgba(114, 65, 238, 0.6);
+        }
+      }
+
+      @keyframes subtitleTypewriter {
+        0% {
+          width: 0;
+          opacity: 0;
+        }
+        1% {
+          opacity: 1;
+        }
+        100% {
+          width: 100%;
+          opacity: 1;
+        }
+      }
+
+      @keyframes subtitleGradient {
+        0%, 100% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+      }
+
+      @keyframes blink-caret {
+        from, to { border-color: transparent; }
+        50% { border-color: rgba(147, 51, 234, 0.8); }
+      }
+
+      .title-animate {
+        animation: titleSlideIn 1s ease-out forwards, titleGlow 3s ease-in-out infinite 1s;
+      }
+
+      .subtitle-animate {
+        overflow: hidden;
+        white-space: nowrap;
+        width: 0;
+        border-right: 2px solid rgba(147, 51, 234, 0.8);
+        animation: 
+          subtitleTypewriter 2s steps(35, end) forwards,
+          blink-caret 0.75s step-end infinite 2s,
+          subtitleGradient 3s ease-in-out infinite 2s;
+        background: linear-gradient(45deg, #e0e0e0, #8e83f5, #c7b0de, #9333ea);
+        background-size: 300% 300%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .subtitle-animate::after {
+        content: '';
+        border-right: none;
+      }
     `;
     document.head.appendChild(style);
 
     createParticles();
 
-    // Smooth scroll for CTA button
+    setTimeout(animateTitle, 500);
+
     const handleCTAClick = (e) => {
-      e.preventDefault();
-      const target = document.querySelector('#timeline');
-      if (target) {
-        target.scrollIntoView({
-          behavior: 'smooth',
-          block: 'start'
-        });
+      if (e.target.closest('.cta-button')) {
+        e.preventDefault();
+        const target = document.querySelector('#contact');
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
       }
     };
 
-    const ctaButton = document.querySelector('.cta-button');
-    if (ctaButton) {
-      ctaButton.addEventListener('click', handleCTAClick);
-    }
+    document.addEventListener('click', handleCTAClick);
 
     return () => {
-      if (ctaButton) {
-        ctaButton.removeEventListener('click', handleCTAClick);
+      document.removeEventListener('click', handleCTAClick);
+      if (document.head.contains(style)) {
+        document.head.removeChild(style);
       }
     };
   }, []);
@@ -95,6 +187,7 @@ const Hero = () => {
               src="/profile.jpg"
               alt="Jing Du Profile"
               className="profile-image"
+              loading="lazy" 
             />
             <div className="profile-ring"></div>
           </div>
@@ -103,37 +196,51 @@ const Hero = () => {
             <p className="hero-subtitle">Software Engineer & AI Enthusiast</p>
             <div className="hero-intro">
             <p>
-              I’m a Master’s student in Computer Science at Northeastern University, passionate about using technology to solve real-world problems and improve lives.
-              
-              </p>
-              <p>With dual Bachelor’s degrees in Materials Physics and Computer Science, plus a Master’s in Material Science, I’ve spent 5 years working across R&D, software development, and project management.
-              </p>
-              <p>
-              Now, I’m ready to return to a hands-on software engineering role, eager to deepen my skills and build impactful solutions. I’m excited to grow as an engineer and make a real difference!
-              </p>
+              I'm a <strong>Master's student in Computer Science</strong> at <strong>Northeastern University</strong>, driven by a passion for using technology to solve real-world problems and improve lives.
+            </p>
+            <p>
+              With <strong>dual Bachelor's degrees</strong> in <strong>Materials Physics</strong> and <strong>Computer Science</strong>, and a <strong>Master's in Materials Science</strong>, I've spent the past <strong>5 years</strong> working across <strong>Materials R&D</strong>, <strong>software development</strong>, and <strong>project management</strong>.
+            </p>
+            <p>
+              Now, I'm transitioning back to a <strong>hands-on software engineering</strong> role, eager to sharpen my skills and create <strong>meaningful, user-centered solutions</strong>. I'm excited to grow as an engineer and <strong>contribute to work that truly matters</strong>.
+            </p>
             </div>
           </div>
         </div>
-        <a href="#contact" className="cta-button fade-in-up">
-          Get in Touch
-        </a>
-        <a href="/DJs_resume.pdf" className="cta-button fade-in-up" download>
-          Download Resume
-        </a>
+        <div className="cta-buttons">
+          <a href="#contact" className="cta-button fade-in-up">
+            Get in Touch
+          </a>
+          <a href="/DJs_resume.pdf" className="cta-button fade-in-up" download>
+            Download Resume
+          </a>
+        </div>
       </div>
 
       <style jsx>{`
         .hero {
-          min-height: auto;
-          padding-top: 200px;
-          padding-bottom: 150px;
-          height: auto;
+          min-height: 100vh;
+          padding: clamp(2rem, 8vw, 8rem) clamp(1rem, 5vw, 4rem);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          position: relative;
+          overflow: hidden;
+          background: linear-gradient(135deg,rgba(63, 16, 235, 0.17) 0%,rgba(53, 35, 120, 0.45) 100%);
+        }
+
+        .hero-content {
+          max-width: 1200px;
+          width: 100%;
+          margin: 0 auto;
+          position: relative;
+          z-index: 2;
         }
 
         .profile-section {
           display: flex;
           align-items: center;
-          gap: 3rem;
+          gap: clamp(1.5rem, 4vw, 3rem);
           margin-bottom: 2rem;
           flex-wrap: wrap;
           justify-content: center;
@@ -141,11 +248,9 @@ const Hero = () => {
 
         .profile-image-container {
           position: relative;
-          width: 200px;
-          height: 200px;
+          width: clamp(120px, 20vw, 200px);
+          height: clamp(120px, 20vw, 200px);
           flex-shrink: 0;
-          margin-left: 1rem;
-          margin-right: 1rem;
         }
 
         .profile-image {
@@ -154,7 +259,7 @@ const Hero = () => {
           border-radius: 50%;
           object-fit: cover;
           border: 4px solid rgba(147, 51, 234, 0.3);
-          transition: all 0.3s ease;
+          transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
           box-shadow: 0 10px 30px rgba(147, 51, 234, 0.3);
         }
 
@@ -186,45 +291,42 @@ const Hero = () => {
         .hero-text {
           text-align: left;
           flex: 1;
-          min-width: 300px;
+          min-width: min(100%, 300px);
         }
 
         .hero-text h1 {
-          font-size: 4rem;
+          font-size: clamp(2rem, 5vw, 4rem);
           font-weight: 700;
           margin-bottom: 1rem;
-          background: linear-gradient(45deg,rgb(247, 247, 247),rgb(142, 131, 245));
+          background: linear-gradient(45deg, #ffffff, #8e83f5);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           background-clip: text;
-          margin-left: 1.5rem;
-          margin-right: 1.5rem;
+          opacity: 0;
+          transform: translateY(-50px) scale(0.8);
         }
 
         .hero-subtitle {
-          font-size: 1.5rem;
+          font-size: clamp(1rem, 2vw, 1.5rem);
           margin-bottom: 1rem;
           color: #e0e0e0;
-          margin-left: 1.5rem;
-          margin-right: 1.5rem;
+          opacity: 0;
         }
 
         .hero-intro {
-          background: rgba(147, 51, 234, 0.1);
+          background: rgba(109, 103, 219, 0.1);
           border: 1px solid rgba(147, 51, 234, 0.2);
           border-radius: 16px;
-          padding: 1.5rem;
+          padding: clamp(1rem, 2vw, 1.5rem);
           margin-top: 1rem;
           backdrop-filter: blur(10px);
-          margin-left: 1.5rem;
-          margin-right: 1.5rem;
         }
 
         .hero-intro p {
           margin: 0 0 1rem 0;
           line-height: 1.6;
           color: #e0e0e0;
-          font-size: 0.95rem;
+          font-size: clamp(0.85rem, 2vw, 0.95rem);
         }
 
         .hero-intro p:last-child {
@@ -232,87 +334,69 @@ const Hero = () => {
         }
 
         .hero-intro strong {
-          color: rgb(156, 132, 252);
+          color: rgb(188, 181, 245);
           font-weight: 600;
         }
 
-        @media (max-width: 768px) {
-          .hero {
-            min-height: auto;
-            height: auto;
-            padding-top: 150px;
-            padding-bottom: 100px;
-          }
+        .cta-buttons {
+          display: flex;
+          gap: 1rem;
+          justify-content: center;
+          flex-wrap: wrap;
+        }
 
+        .cta-button {
+          display: inline-block;
+          padding: 0.8rem 1.8rem;
+          background: linear-gradient(45deg, rgba(108, 72, 239, 0.64), rgba(186, 83, 205, 0.95));
+          color: white;
+          border-radius: 50px;
+          text-decoration: none;
+          font-weight: 600;
+          transition: all 0.3s ease;
+          border: none;
+          cursor: pointer;
+          box-shadow: 0 4px 15px rgba(147, 51, 234, 0.3);
+          text-align: center;
+        }
+
+        .cta-button:hover {
+          transform: translateY(-3px);
+          box-shadow: 0 8px 25px rgba(173, 96, 245, 0.4);
+          background: linear-gradient(45deg, rgba(147, 51, 234, 0.9), rgb(111, 61, 240));
+        }
+
+        @media (max-width: 768px) {
           .profile-section {
             flex-direction: column;
             text-align: center;
-            gap: 2rem;
-            margin-right: 2rem;
-            margin-left: 2rem;
           }
 
           .hero-text {
             text-align: center;
-            min-width: unset;
           }
 
-          .hero-text h1 {
-            font-size: 2.5rem;
+          .cta-buttons {
+            flex-direction: column;
+            align-items: center;
           }
 
-          .hero-subtitle {
-            font-size: 1.2rem;
-          }
-
-          .hero-intro {
-            padding: 1.25rem;
-          }
-
-          .hero-intro p {
-            font-size: 0.9rem;
-          }
-
-          .profile-image-container {
-            width: 150px;
-            height: 150px;
-          }
-
-          .cta-desktop {
-            display: none;
-          }
-
-          .cta-mobile {
-            display: inline;
-          }
-
-          .resume-button {
-            margin-left: 0;
-            margin-top: 1rem;
+          .cta-button {
             width: 100%;
-            text-align: center;
+            max-width: 250px;
           }
         }
 
         @media (max-width: 480px) {
           .hero {
-            padding-top: 100px;
+            padding-top: 6rem;
+            padding-bottom: 4rem;
           }
 
-          .profile-section {
-            margin-right: 1rem;
-            margin-left: 1rem;
+          .hero-intro {
+            padding: 1rem;
           }
-
-          .profile-image-container {
-            width: 120px;
-            height: 120px;
-          }
-
-          .hero-text h1 {
-            font-size: 2rem;
-          }
-      }
+        }
       `}</style>
     </section>
   );
