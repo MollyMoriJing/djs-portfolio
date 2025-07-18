@@ -1,15 +1,18 @@
 import { useEffect } from 'react'
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom'
 import Navigation from './components/Navigation'
-import Hero from './components/Hero'
-import Timeline from './components/Timeline'
-import Projects from './components/Projects'
-import Skills from './components/Skills'
-import Certifications from './components/Certifications'
-import Contact from './components/Contact'
+import MainPage from './pages/MainPage'
+import Blog from './pages/Blog'
+import BlogPost from './pages/BlogPost'
 import './styles/global.css'
 
-function App() {
+function AppContent() {
+  const location = useLocation();
+
   useEffect(() => {
+    // Only run scroll animations on main page
+    if (location.pathname !== '/') return;
+
     // Scroll animations function
     const animateOnScroll = () => {
       const elements = document.querySelectorAll('.animate-on-scroll');
@@ -34,9 +37,12 @@ function App() {
       window.removeEventListener('scroll', animateOnScroll);
       window.removeEventListener('load', animateOnScroll);
     };
-  }, []);
+  }, [location.pathname]);
 
   useEffect(() => {
+    // Only handle anchor clicks on main page
+    if (location.pathname !== '/') return;
+
     const handleAnchorClick = (e) => {
       const target = e.target.closest('a[href^="#"]');
       if (target) {
@@ -58,18 +64,25 @@ function App() {
     return () => {
       document.removeEventListener('click', handleAnchorClick);
     };
-  }, []);
+  }, [location.pathname]);
 
   return (
     <div className="App">
       <Navigation />
-      <Hero />
-      <Timeline />
-      <Projects />
-      <Skills />
-      <Certifications />
-      <Contact />
+      <Routes>
+        <Route path="/" element={<MainPage />} />
+        <Route path="/blog" element={<Blog />} />
+        <Route path="/blog/:id" element={<BlogPost />} />
+      </Routes>
     </div>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <AppContent />
+    </Router>
   )
 }
 

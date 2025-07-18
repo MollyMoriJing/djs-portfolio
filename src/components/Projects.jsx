@@ -38,7 +38,7 @@ const Projects = () => {
       features: ["99.3% accuracy rate", "Ensemble learning approach", "Real-time detection API", "Comprehensive linguistic analysis"]
     },
     {
-      id: 3,
+      id: 4,
       title: "AI Vision Studio - Eyes for the Blind",
       description: "Comprehensive assistive technology platform serving as 'digital eyes' for blind and visually impaired users. Combines real-time computer vision, advanced OCR, and intelligent text-to-speech synthesis with 10 specialized analysis modes.",
       technologies: ["JavaScript", "Python", "Flask", "HuggingFace Transformers", "SmolVLM",  "WebRTC", "Web Speech API", "Canvas API","ARIA/WCAG 2.1"],
@@ -60,7 +60,7 @@ const Projects = () => {
       description: "A full-stack food delivery system developed for learning purposes, using Spring Boot, MyBatis, Vue.js, and WeChat Mini Program. Implements order management, menu browsing, user authentication, and real-time notifications.",
       technologies: ["Java", "Spring Boot", "MyBatis", "Vue.js", "WeChat Mini Program", "MySQL", "Redis", "Nginx"],
       github: "https://github.com/MollyMoriJing/sky-take-out",
-      image: "https://github.com/MollyMoriJing/sky-take-out/raw/main/assert/%E5%B7%A5%E4%BD%9C%E5%8F%B0.png",
+      image: "/Skytakeout.jpg",
       details: "This project simulates a real-world restaurant ordering platform with an admin panel, user interface, and mini program. Focuses on backend RESTful APIs, frontend UI/UX, and integration with cloud services for storage and payment simulation.",
       features: [
         "Admin panel with employee and menu management",
@@ -109,50 +109,55 @@ const Projects = () => {
       <div className="container">
         <h2 className="section-title animate-on-scroll">Featured Projects</h2>
         <div className="projects-grid">
-          {projectsData.map((project) => (
+          {projectsData.map((project, index) => (
             <div 
               key={project.id}
               className="project-card animate-on-scroll"
+              style={{ animationDelay: `${index * 0.1}s` }}
               tabIndex={0}
               role="button"
               aria-label={`View details for ${project.title}`}
             >
               <div className="project-image">
                 <img src={project.image} alt={project.title} />
-                <div className="project-overlay"></div>
+                <div className="project-overlay">
+                  <div className="overlay-content">
+                    <button 
+                      className="overlay-btn primary"
+                      onClick={() => openProjectModal(project)}
+                    >
+                      <span>👁️</span> View Details
+                    </button>
+                    {project.github && (
+                      <button 
+                        className="overlay-btn secondary"
+                        onClick={(e) => handleLinkClick(project.github, e)}
+                      >
+                        <span>🔗</span> GitHub
+                      </button>
+                    )}
+                    {project.demo && (
+                      <button 
+                        className="overlay-btn tertiary"
+                        onClick={(e) => handleLinkClick(project.demo, e)}
+                      >
+                        <span>🚀</span> Demo
+                      </button>
+                    )}
+                  </div>
+                </div>
               </div>
               <div className="project-content">
                 <h3 className="project-title">{project.title}</h3>
                 <p className="project-description">{project.description}</p>
-                <div className="timeline-tech">
-                  {project.technologies.map((tech, index) => (
+                <div className="project-tech">
+                  {project.technologies.slice(0, 4).map((tech, index) => (
                     <span key={index} className="tech-tag">
                       {tech}
                     </span>
                   ))}
-                </div>
-                <div className="project-actions">
-                  <button 
-                    className="project-btn primary"
-                    onClick={() => openProjectModal(project)}
-                  >
-                    View Details
-                  </button>
-                  {project.github && (
-                    <button 
-                      className="project-btn secondary"
-                      onClick={(e) => handleLinkClick(project.github, e)}
-                    >
-                      <span>🔗</span> GitHub
-                    </button>
-                  )}
-                  {project.demo && (
-                    <button 
-                      className="project-btn tertiary"
-                      onClick={(e) => handleLinkClick(project.demo, e)}
-                    >
-                      <span>🚀</span> Live Demo
-                    </button>
+                  {project.technologies.length > 4 && (
+                    <span className="tech-tag more">+{project.technologies.length - 4}</span>
                   )}
                 </div>
               </div>
@@ -188,7 +193,7 @@ const Projects = () => {
 
               <div className="modal-section">
                 <h4>Technologies Used</h4>
-                <div className="timeline-tech">
+                <div className="modal-tech-grid">
                   {selectedProject.technologies.map((tech, index) => (
                     <span key={index} className="tech-tag">
                       {tech}
@@ -222,42 +227,117 @@ const Projects = () => {
 
       <style jsx>{`
         .projects-section {
-          padding: 100px 0;
-          background: rgba(0, 0, 0, 0.3);
+          padding: 120px 0 100px;
+          background: linear-gradient(135deg, rgba(0, 0, 0, 0.1) 0%, rgba(147, 51, 234, 0.05) 50%, rgba(0, 0, 0, 0.1) 100%);
+          position: relative;
+        }
+
+        .projects-section::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: radial-gradient(circle at 50% 50%, rgba(147, 51, 234, 0.1) 0%, transparent 70%);
+          pointer-events: none;
+        }
+
+        .container {
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 0 2rem;
+          position: relative;
+          z-index: 2;
+        }
+
+        .section-title {
+          text-align: center;
+          font-size: 3rem;
+          color: #e0e0e0;
+          margin-bottom: 3rem;
+          background: linear-gradient(45deg, #9333ea, #c084fc);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          position: relative;
+        }
+
+        .section-title::after {
+          content: '';
+          position: absolute;
+          bottom: -10px;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 60px;
+          height: 4px;
+          background: linear-gradient(45deg, #9333ea, #c084fc);
+          border-radius: 2px;
+        }
+
+        .projects-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+          gap: 2.5rem;
+          margin-top: 2rem;
         }
 
         .project-card {
-          background: rgba(255, 255, 255, 0.05);
-          backdrop-filter: blur(10px);
-          border: 1px solid rgba(108, 100, 255, 0.2);
-          border-radius: 15px;
+          background: rgba(255, 255, 255, 0.03);
+          backdrop-filter: blur(20px);
+          border: 1px solid rgba(147, 51, 234, 0.15);
+          border-radius: 20px;
           overflow: hidden;
-          transition: all 0.3s ease;
+          transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
           cursor: pointer;
+          position: relative;
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .project-card::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: linear-gradient(45deg, rgba(147, 51, 234, 0.05), rgba(192, 132, 252, 0.05));
+          opacity: 0;
+          transition: opacity 0.4s ease;
+          pointer-events: none;
+          border-radius: 20px;
         }
 
         .project-card:hover {
-          transform: translateY(-10px);
-          background: rgba(144, 100, 255, 0.1);
-          border-color:rgb(121, 100, 255);
-          box-shadow: 0 20px 40px rgba(121, 100, 255, 0.2);
+          transform: translateY(-15px) scale(1.02);
+          border-color: rgba(147, 51, 234, 0.4);
+          box-shadow: 
+            0 25px 50px rgba(147, 51, 234, 0.15),
+            0 0 0 1px rgba(147, 51, 234, 0.1);
+        }
+
+        .project-card:hover::before {
+          opacity: 1;
         }
 
         .project-image {
           position: relative;
-          height: 200px;
+          height: 220px;
           overflow: hidden;
+          background: linear-gradient(45deg, rgba(147, 51, 234, 0.1), rgba(192, 132, 252, 0.1));
         }
 
         .project-image img {
           width: 100%;
           height: 100%;
           object-fit: cover;
-          transition: transform 0.3s ease;
+          transition: all 0.4s ease;
+          filter: brightness(0.9) contrast(1.1);
         }
 
         .project-card:hover .project-image img {
           transform: scale(1.1);
+          filter: brightness(1.1) contrast(1.2);
         }
 
         .project-overlay {
@@ -266,158 +346,346 @@ const Projects = () => {
           left: 0;
           right: 0;
           bottom: 0;
-          background: linear-gradient(45deg, rgba(147, 51, 234, 0.2), rgba(192, 132, 252, 0.2));
+          background: linear-gradient(
+            135deg, 
+            rgba(147, 51, 234, 0.85) 0%, 
+            rgba(192, 132, 252, 0.85) 100%
+          );
+          display: flex;
+          align-items: center;
+          justify-content: center;
           opacity: 0;
-          transition: opacity 0.3s ease;
+          transform: translateY(100%);
+          transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         .project-card:hover .project-overlay {
           opacity: 1;
+          transform: translateY(0);
         }
 
-        .project-content {
-          padding: 2rem;
-        }
-
-        .project-actions {
+        .overlay-content {
           display: flex;
+          flex-direction: column;
           gap: 0.75rem;
-          margin-top: 1.5rem;
-          flex-wrap: wrap;
+          align-items: center;
         }
 
-        .project-btn {
-          padding: 0.5rem 1rem;
+        .overlay-btn {
+          padding: 0.6rem 1.2rem;
           border: none;
           border-radius: 25px;
           font-weight: 600;
           cursor: pointer;
           transition: all 0.3s ease;
-          font-size: 0.85rem;
+          font-size: 0.9rem;
           display: flex;
           align-items: center;
           gap: 0.5rem;
-          text-decoration: none;
+          min-width: 130px;
+          justify-content: center;
+          backdrop-filter: blur(10px);
         }
 
-        .project-btn.large {
-          padding: 0.75rem 1.5rem;
-          font-size: 1rem;
-        }
-
-        .project-btn.primary {
-          background: linear-gradient(45deg, #9333ea, #c084fc);
-          color: #0f0f23;
-        }
-
-        .project-btn.secondary {
-          background: transparent;
+        .overlay-btn.primary {
+          background: rgba(255, 255, 255, 0.9);
           color: #9333ea;
-          border: 1px solid rgba(147, 51, 234, 0.5);
+          border: 2px solid rgba(255, 255, 255, 0.3);
         }
 
-        .project-btn.tertiary {
-          background: rgba(147, 51, 234, 0.1);
+        .overlay-btn.secondary {
+          background: rgba(0, 0, 0, 0.7);
+          color: white;
+          border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .overlay-btn.tertiary {
+          background: rgba(147, 51, 234, 0.9);
+          color: white;
+          border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .overlay-btn:hover {
+          transform: translateY(-2px) scale(1.05);
+          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .project-content {
+          padding: 2rem;
+          position: relative;
+          z-index: 1;
+        }
+
+        .project-title {
+          color: #e0e0e0;
+          font-size: 1.3rem;
+          margin-bottom: 1rem;
+          font-weight: 600;
+          line-height: 1.3;
+        }
+
+        .project-description {
+          color: rgba(224, 224, 224, 0.85);
+          line-height: 1.6;
+          margin-bottom: 1.5rem;
+          font-size: 0.95rem;
+          display: -webkit-box;
+          -webkit-line-clamp: 3;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+
+        .project-tech {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.5rem;
+        }
+
+        .tech-tag {
+          background: linear-gradient(45deg, rgba(147, 51, 234, 0.2), rgba(192, 132, 252, 0.2));
           color: #c084fc;
+          padding: 0.4rem 0.8rem;
+          border-radius: 15px;
+          font-size: 0.8rem;
           border: 1px solid rgba(147, 51, 234, 0.3);
+          font-weight: 500;
+          transition: all 0.3s ease;
         }
 
-        .project-btn:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 5px 15px rgba(147, 51, 234, 0.3);
+        .tech-tag:hover {
+          background: linear-gradient(45deg, rgba(147, 51, 234, 0.3), rgba(192, 132, 252, 0.3));
+          color: #e0e0e0;
+          transform: translateY(-1px);
+        }
+
+        .tech-tag.more {
+          background: linear-gradient(45deg, rgba(147, 51, 234, 0.4), rgba(192, 132, 252, 0.4));
+          color: #ffffff;
+          font-weight: 600;
+        }
+
+        .modal-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(0, 0, 0, 0.85);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 2000;
+          backdrop-filter: blur(8px);
+          padding: 2rem;
         }
 
         .project-modal {
-          background: rgba(15, 15, 35, 0.95);
-          backdrop-filter: blur(15px);
+          background: linear-gradient(145deg, rgba(15, 15, 35, 0.95), rgba(25, 25, 45, 0.95));
+          backdrop-filter: blur(20px);
           border: 1px solid rgba(147, 51, 234, 0.3);
-          border-radius: 20px;
+          border-radius: 25px;
           max-width: 800px;
-          width: 90%;
+          width: 100%;
           max-height: 90vh;
           overflow-y: auto;
           position: relative;
+          box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-close {
+          position: absolute;
+          top: 1.5rem;
+          right: 1.5rem;
+          background: rgba(147, 51, 234, 0.2);
+          border: 1px solid rgba(147, 51, 234, 0.4);
+          color: #9333ea;
+          font-size: 1.8rem;
+          cursor: pointer;
+          width: 45px;
+          height: 45px;
           display: flex;
-          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          border-radius: 50%;
+          transition: all 0.3s ease;
+          z-index: 10;
+        }
+
+        .modal-close:hover {
+          background: rgba(147, 51, 234, 0.4);
+          color: #ffffff;
+          transform: rotate(90deg) scale(1.1);
         }
 
         .modal-image-container {
-          height: 300px;
+          height: 280px;
           overflow: hidden;
-          border-radius: 20px 20px 0 0;
+          border-radius: 25px 25px 0 0;
+          position: relative;
         }
 
         .modal-project-image {
           width: 100%;
           height: 100%;
           object-fit: cover;
+          filter: brightness(1.1) contrast(1.1);
         }
 
         .modal-project-content {
-          padding: 2rem;
+          padding: 2.5rem;
+          padding-top: 2rem;
         }
 
         .modal-project-title {
-          color:rgb(152, 100, 255);
-          margin-bottom: 1rem;
-          font-size: 1.5rem;
+          color: #e0e0e0;
+          margin-bottom: 1.5rem;
+          font-size: 1.8rem;
+          font-weight: 600;
         }
 
         .modal-project-details {
-          color: #e0e0e0;
-          line-height: 1.6;
-          margin-bottom: 1.5rem;
+          color: rgba(224, 224, 224, 0.9);
+          line-height: 1.7;
+          margin-bottom: 2rem;
+          font-size: 1rem;
+        }
+
+        .modal-section {
+          margin-bottom: 2rem;
+        }
+
+        .modal-section h4 {
+          color: #9333ea;
+          margin-bottom: 1rem;
+          font-size: 1.2rem;
+          font-weight: 600;
         }
 
         .features-list {
           list-style: none;
           padding: 0;
+          margin: 0;
         }
 
         .features-list li {
-          color:rgb(224, 224, 224);
-          padding: 0.25rem 0;
-          padding-left: 1rem;
+          color: rgba(224, 224, 224, 0.9);
+          padding: 0.5rem 0;
+          padding-left: 1.5rem;
           position: relative;
+          line-height: 1.6;
         }
 
         .features-list li::before {
-          content: '✓';
-          color:rgb(141, 100, 255);
+          content: '✨';
           position: absolute;
           left: 0;
+          color: #9333ea;
           font-weight: bold;
+        }
+
+        .modal-tech-grid {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.75rem;
         }
 
         .modal-actions {
           display: flex;
           gap: 1rem;
-          margin-top: 2rem;
+          margin-top: 2.5rem;
           justify-content: center;
           flex-wrap: wrap;
         }
 
+        .project-btn {
+          padding: 0.75rem 1.5rem;
+          border: none;
+          border-radius: 25px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          font-size: 1rem;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+        }
+
+        .project-btn.large {
+          padding: 1rem 2rem;
+          font-size: 1.1rem;
+        }
+
+        .project-btn.primary {
+          background: linear-gradient(45deg, #9333ea, #c084fc);
+          color: white;
+          border: 2px solid transparent;
+        }
+
+        .project-btn.secondary {
+          background: transparent;
+          color: #9333ea;
+          border: 2px solid rgba(147, 51, 234, 0.5);
+        }
+
+        .project-btn:hover {
+          transform: translateY(-3px) scale(1.05);
+          box-shadow: 0 10px 30px rgba(147, 51, 234, 0.4);
+        }
+
         @media (max-width: 768px) {
-          .project-actions {
-            flex-direction: column;
+          .projects-grid {
+            grid-template-columns: 1fr;
+            gap: 2rem;
           }
 
-          .project-btn {
-            width: 100%;
-            justify-content: center;
+          .project-card {
+            margin: 0 auto;
+            max-width: 400px;
+          }
+
+          .section-title {
+            font-size: 2rem;
           }
 
           .modal-project-content {
-            padding: 1.5rem;
+            padding: 2rem 1.5rem;
           }
 
           .modal-actions {
             flex-direction: column;
+            align-items: center;
           }
 
           .project-btn.large {
             width: 100%;
+            max-width: 250px;
             justify-content: center;
+          }
+
+          .overlay-content {
+            gap: 0.5rem;
+          }
+
+          .overlay-btn {
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+            min-width: 120px;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .projects-grid {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            padding: 0 0.5rem;
+          }
+
+          .project-content {
+            padding: 1.5rem;
+          }
+
+          .modal-project-content {
+            padding: 1.5rem;
           }
         }
       `}</style>

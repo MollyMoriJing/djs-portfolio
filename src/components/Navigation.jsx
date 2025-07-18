@@ -1,20 +1,24 @@
 import { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('hero');
+  const location = useLocation();
 
   const navItems = [
     { id: 'hero', label: 'Home', href: '#hero' },
     { id: 'timeline', label: 'Journey', href: '#timeline' },
     { id: 'projects', label: 'Projects', href: '#projects' },
     { id: 'skills', label: 'Skills', href: '#skills' },
-    { id: 'certifications', label: 'Certifications & Publications', href: '#certifications' },
+    { id: 'certifications', label: 'Certifications', href: '#certifications' },
     { id: 'contact', label: 'Contact', href: '#contact' }
   ];
 
-  // Track active section on scroll
+  // Track active section on scroll only on main page
   useEffect(() => {
+    if (location.pathname !== '/') return;
+
     const handleScroll = () => {
       const sections = navItems.map(item => item.id);
       const scrollPosition = window.scrollY + 100;
@@ -33,30 +37,61 @@ const Navigation = () => {
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [location.pathname]);
 
   const handleNavClick = (e, href) => {
-    e.preventDefault();
-    const targetId = href.substring(1);
-    const targetElement = document.getElementById(targetId);
-    
-    if (targetElement) {
-      targetElement.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start'
-      });
+    // If we're on the blog page and clicking a main nav item, go to main page first
+    if (location.pathname === '/blog' && href.startsWith('#')) {
+      window.location.href = '/' + href;
+      return;
+    }
+
+    // If we're on main page, use smooth scroll
+    if (location.pathname === '/' && href.startsWith('#')) {
+      e.preventDefault();
+      const targetId = href.substring(1);
+      const targetElement = document.getElementById(targetId);
+      
+      if (targetElement) {
+        targetElement.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
     }
     
     setIsOpen(false);
   };
 
+  const handleBrandClick = (e) => {
+    if (location.pathname === '/') {
+      e.preventDefault();
+      const heroElement = document.getElementById('hero');
+      if (heroElement) {
+        heroElement.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
+    }
+  };
+
+  // Check if current page is blog
+  const isOnBlogPage = location.pathname === '/blog';
+
   return (
     <nav className="navigation">
       <div className="nav-container">
         <div className="nav-brand">
-          <a href="#hero" onClick={(e) => handleNavClick(e, '#hero')}>
+          <Link to="/" onClick={handleBrandClick}>
             Jing Du
-          </a>
+          </Link>
+          <Link 
+            to="/blog" 
+            className={`blog-btn ${isOnBlogPage ? 'active' : ''}`}
+          >
+            Blog
+          </Link>
         </div>
         
         {/* Desktop Navigation */}
@@ -65,7 +100,7 @@ const Navigation = () => {
             <a
               key={item.id}
               href={item.href}
-              className={`nav-link ${activeSection === item.id ? 'active' : ''}`}
+              className={`nav-link ${!isOnBlogPage && activeSection === item.id ? 'active' : ''}`}
               onClick={(e) => handleNavClick(e, item.href)}
             >
               {item.label}
@@ -87,12 +122,19 @@ const Navigation = () => {
           <a
             key={item.id}
             href={item.href}
-            className={`mobile-nav-link ${activeSection === item.id ? 'active' : ''}`}
+            className={`mobile-nav-link ${!isOnBlogPage && activeSection === item.id ? 'active' : ''}`}
             onClick={(e) => handleNavClick(e, item.href)}
           >
             {item.label}
           </a>
         ))}
+        <Link
+          to="/blog"
+          className={`mobile-nav-link ${isOnBlogPage ? 'active' : ''}`}
+          onClick={() => setIsOpen(false)}
+        >
+          Blog
+        </Link>
       </div>
 
       <style jsx>{`
@@ -117,15 +159,44 @@ const Navigation = () => {
           align-items: center;
         }
 
+        .nav-brand {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+        }
+
         .nav-brand a {
           font-size: 1.5rem;
           font-weight: 700;
-          color: #9333ea;
+          color:rgb(115, 77, 149);
           text-decoration: none;
-          background: linear-gradient(45deg, #9333ea, #c084fc);
+          background: linear-gradient(45deg,rgb(209, 204, 245),rgb(255, 255, 255));
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           background-clip: text;
+        }
+
+        .blog-btn {
+          padding: 0.5rem 1rem;
+          background: linear-gradient(45deg, rgba(95, 64, 160, 0.45));
+          border: 1px solid rgba(147, 51, 234, 0.3);
+          border-radius: 20px;
+          font-size: 0.9rem !important;
+          font-weight: 600 !important;
+          transition: all 0.3s ease;
+          color: #c084fc !important;
+          background-clip: initial !important;
+          -webkit-background-clip: initial !important;
+          -webkit-text-fill-color: initial !important;
+        }
+
+        .blog-btn:hover,
+        .blog-btn.active {
+          background: linear-gradient(45deg, rgba(147, 51, 234, 0.4), rgba(192, 132, 252, 0.4));
+          border-color:rgb(254, 254, 254);
+          transform: translateY(-1px);
+          box-shadow: 0 5px 15px rgba(147, 51, 234, 0.2);
+          color: #e0e0e0 !important;
         }
 
         .nav-menu {
@@ -211,7 +282,7 @@ const Navigation = () => {
         }
 
         .mobile-menu.open {
-          max-height: 400px;
+          max-height: 500px;
           display: flex;
         }
 
@@ -266,6 +337,11 @@ const Navigation = () => {
           .nav-brand a {
             font-size: 1.3rem;
           }
+
+          .blog-btn {
+            font-size: 0.8rem !important;
+            padding: 0.4rem 0.8rem;
+          }
         }
 
         @media (max-width: 480px) {
@@ -280,6 +356,11 @@ const Navigation = () => {
           .mobile-nav-link {
             padding: 0.8rem 1.5rem;
             font-size: 0.9rem;
+          }
+
+          .blog-btn {
+            font-size: 0.75rem !important;
+            padding: 0.3rem 0.6rem;
           }
         }
       `}</style>

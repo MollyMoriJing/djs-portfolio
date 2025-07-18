@@ -156,7 +156,7 @@ const Hero = () => {
     setTimeout(animateTitle, 500);
 
     const handleCTAClick = (e) => {
-      if (e.target.closest('.cta-button')) {
+      if (e.target.closest('.cta-button[href="#contact"]')) {
         e.preventDefault();
         const target = document.querySelector('#contact');
         if (target) {
@@ -334,7 +334,7 @@ const Hero = () => {
         }
 
         .hero-intro strong {
-          color: rgb(188, 181, 245);
+          color: rgb(188, 152, 236);
           font-weight: 600;
         }
 
